@@ -56,7 +56,7 @@ async def image_predict(image_url: ImageUrl):
         return {"error": f"Failed to save the image: {str(e)}"}
 
 
-    MODEL = tf.keras.models.load_model("MobileNet_rice.h5")
+    MODEL = tf.keras.models.load_model("MobileNet_rice.h5",compile=False)
     def preprocess_image(image_path):
         image = Image.open(image_path)
         image = image.resize((224, 224))
