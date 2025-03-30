@@ -10,7 +10,9 @@ import tensorflow as tf
 import json
 
 
-MODEL = tf.keras.models.load_model("MobileNet_rice.h5",compile=False)
+MODEL_rice1 = tf.keras.models.load_model("rice\MobileNet_rice.h5",compile=False)
+MODEL_potato2 = tf.keras.models.load_model("potato\MobileNet_potato.h5",compile=False)
+
 
 app = FastAPI()
 
@@ -30,11 +32,13 @@ UPLOAD_DIR.mkdir(exist_ok=True)  # Ensure the directory exists
 # Define the structure of the incoming JSON request
 class ImageUrl(BaseModel):
     url: str  # The URL of the image to download
+    id: int
 
 
 @app.post("/image_predict")
 async def image_predict(image_url: ImageUrl):
     url = image_url.url
+    id = image_url.id
 
     # Check if the URL is valid by attempting to download the image
     try:
@@ -71,32 +75,25 @@ async def image_predict(image_url: ImageUrl):
     image_array = preprocess_image("downloads/downloaded_image.jpg")
 
     # Make prediction
-    predictions = MODEL.predict(image_array)
-    
-    # Assuming a classification model, you can get the class index or label
-    predicted_class = np.argmax(predictions, axis=1).item()  # Get the class index (adjust based on your model)
 
 
-    # Load disease mapping from JSON file
-    with open("class_indices.json") as f:
-        disease_mapping = json.load(f)
+    if id==1 :
+        predictions = MODEL_rice1.predict(image_array)
+        # Assuming a classification model, you can get the class index or label
+        predicted_class = np.argmax(predictions, axis=1).item()  # Get the class index (adjust based on your model)
+        # Load disease mapping from JSON file
+        with open("rice\class_indices.json") as f:
+            disease_mapping = json.load(f)
+    elif id==2 :
+        predictions = MODEL_potato2.predict(image_array)
+        predicted_class = np.argmax(predictions, axis=1).item()
+        with open("potato\class_indices.json") as f:
+            disease_mapping = json.load(f)       
 
-    # Assume the predicted class is obtained from the model (e.g., class 2)
-    # predicted_class = 2
 
     # Get the disease name based on the predicted class
     disease_name = disease_mapping.get(str(predicted_class), "Unknown disease")
-
-
-
     return {"predicted_class": predicted_class, "disease_name": disease_name}
-
-    # Return the prediction
-    # return {"predicted_class": predicted_class}
-
-
-    # Return the image as a response
-    # return FileResponse(file_location)
 
 
 
