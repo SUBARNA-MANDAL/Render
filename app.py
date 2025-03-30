@@ -10,8 +10,8 @@ import tensorflow as tf
 import json
 
 
-MODEL_rice1 = tf.keras.models.load_model("rice\MobileNet_rice.h5",compile=False)
-MODEL_potato2 = tf.keras.models.load_model("potato\MobileNet_potato.h5",compile=False)
+MODEL_rice1 = tf.keras.models.load_model("rice/MobileNet_rice.h5",compile=False)
+MODEL_potato2 = tf.keras.models.load_model("potato/MobileNet_potato.h5",compile=False)
 
 
 app = FastAPI()
@@ -82,12 +82,12 @@ async def image_predict(image_url: ImageUrl):
         # Assuming a classification model, you can get the class index or label
         predicted_class = np.argmax(predictions, axis=1).item()  # Get the class index (adjust based on your model)
         # Load disease mapping from JSON file
-        with open("rice\class_indices.json") as f:
+        with open("rice/class_indices.json") as f:
             disease_mapping = json.load(f)
     elif id==2 :
         predictions = MODEL_potato2.predict(image_array)
         predicted_class = np.argmax(predictions, axis=1).item()
-        with open("potato\class_indices.json") as f:
+        with open("potato/class_indices.json") as f:
             disease_mapping = json.load(f)       
 
 
