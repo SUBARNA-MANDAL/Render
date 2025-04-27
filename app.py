@@ -90,17 +90,10 @@ async def image_predict(image_url: ImageUrl):
         with open("potato/class_indices.json") as f:
             disease_mapping = json.load(f)       
 
-
+    possibility = np.max(predictions)*100
     # Get the disease name based on the predicted class
     disease_name = disease_mapping.get(str(predicted_class), "Unknown disease")
-    return {"predicted_class": predicted_class, "disease_name": disease_name}
-
-
-
-
-
-
-
+    return {"disease_name": disease_name, "Possibility": possibility}
 
 
 if __name__ == "__main__":
