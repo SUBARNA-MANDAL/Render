@@ -31,14 +31,14 @@ UPLOAD_DIR.mkdir(exist_ok=True)  # Ensure the directory exists
 
 # Define the structure of the incoming JSON request
 class ImageUrl(BaseModel):
-    url: str  # The URL of the image to download
-    id: int
+    imageUrl: str
+    modelId: str
 
 
 @app.post("/image_predict")
 async def image_predict(image_url: ImageUrl):
-    url = image_url.url
-    id = image_url.id
+    url = image_url.imageUrl
+    id = image_url.modelId
 
     # Check if the URL is valid by attempting to download the image
     try:
@@ -77,22 +77,31 @@ async def image_predict(image_url: ImageUrl):
     # Make prediction
 
 
-    if id==1 :
+    if id=="1" :
         predictions = MODEL_rice1.predict(image_array)
         # Assuming a classification model, you can get the class index or label
         predicted_class = np.argmax(predictions, axis=1).item()  # Get the class index (adjust based on your model)
         # Load disease mapping from JSON file
         with open("rice/class_indices.json") as f:
             disease_mapping = json.load(f)
-    elif id==2 :
+    elif id=="2" :
         predictions = MODEL_potato2.predict(image_array)
         predicted_class = np.argmax(predictions, axis=1).item()
         with open("potato/class_indices.json") as f:
             disease_mapping = json.load(f)       
 
-    possibility = str(np.max(predictions) * 100)
+    possibility = np.max(predictions) * 100
     disease_name = disease_mapping.get(str(predicted_class), "Unknown disease")
-    return {"disease_name": [disease_name], "possibility": [possibility]}
+    if disease_name == "Healthy":
+        number_of_disease = 0
+        disease_name = []
+    else :
+        number_of_disease = 1
+    return {
+        "number_of_disease":number_of_disease,
+        "disease_name": [disease_name],
+        "possibility": [possibility]
+    }
 
 
 if __name__ == "__main__":
