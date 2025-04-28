@@ -91,10 +91,10 @@ async def image_predict(image_url: ImageUrl):
             disease_mapping = json.load(f)       
 
     possibility = np.max(predictions) * 100
+    possibility = float(f"{possibility:.2f}")
     disease_name = disease_mapping.get(str(predicted_class), "Unknown disease")
     if disease_name == "Healthy":
         number_of_disease = 0
-        disease_name = []
     else :
         number_of_disease = 1
     return {
