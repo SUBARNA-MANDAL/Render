@@ -99,7 +99,7 @@ async def image_predict(image_url: ImageUrl):
         number_of_disease = 1
     return {
         "number_of_disease":number_of_disease,
-        "disease_name": [disease_name],
+        "result": [disease_name],
         "possibility": [possibility]
     }
 
