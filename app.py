@@ -68,7 +68,7 @@ async def image_predict(image_url: ImageUrl):
         image = Image.open(image_path)
         image = image.resize((224, 224))
         image_array = np.array(image) / 255.0  # Normalize
-        image_array = np.expand_dims(image_array, axis=0)  # Add batch dimension
+        image_array = np.expand_dims(image_array, axis=0)  # batch dimension
         return image_array
 
 
