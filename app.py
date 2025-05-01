@@ -1,3 +1,4 @@
+import math
 from PIL import Image
 from fastapi import FastAPI,File,UploadFile
 import uvicorn
@@ -10,8 +11,9 @@ import tensorflow as tf
 import json
 
 
-MODEL_rice1 = tf.keras.models.load_model("rice/MobileNet_rice.h5",compile=False)
-MODEL_potato2 = tf.keras.models.load_model("potato/MobileNet_potato.h5",compile=False)
+MODEL_rice = tf.keras.models.load_model("rice/MobileNet_rice.h5",compile=False)
+MODEL_potato = tf.keras.models.load_model("potato/MobileNet_potato.h5",compile=False)
+MODEL_tomato = tf.keras.models.load_model("tomato/MobileNet_tomato.h5",compile=False)
 
 
 app = FastAPI()
@@ -57,7 +59,7 @@ async def image_predict(image_url: ImageUrl):
         with open(file_location, "wb") as buffer:
             for chunk in response.iter_content(1024):
                 buffer.write(chunk)
-        # print(f"Image saved at {file_location}")  # For debugging purposes
+        # print(f"Image saved at {file_location}")
     except Exception as e:
         return {"error": f"Failed to save the image: {str(e)}"}
 
@@ -78,20 +80,25 @@ async def image_predict(image_url: ImageUrl):
 
 
     if id=="1" :
-        predictions = MODEL_rice1.predict(image_array)
-        # Assuming a classification model, you can get the class index or label
-        predicted_class = np.argmax(predictions, axis=1).item()  # Get the class index (adjust based on your model)
+        predictions = MODEL_rice.predict(image_array)
+        #get the class index or label
+        predicted_class = np.argmax(predictions, axis=1).item()  # Get the class index
         # Load disease mapping from JSON file
         with open("rice/class_indices.json") as f:
             disease_mapping = json.load(f)
     elif id=="2" :
-        predictions = MODEL_potato2.predict(image_array)
+        predictions = MODEL_potato.predict(image_array)
         predicted_class = np.argmax(predictions, axis=1).item()
         with open("potato/class_indices.json") as f:
             disease_mapping = json.load(f)       
+    elif id=="3" :
+        predictions = MODEL_tomato.predict(image_array)
+        predicted_class = np.argmax(predictions, axis=1).item()
+        with open("tomato/class_indices.json") as f:
+            disease_mapping = json.load(f)       
 
     possibility = np.max(predictions) * 100
-    possibility = float(f"{possibility:.2f}")
+    possibility = math.floor(possibility * 100) / 100
     disease_name = disease_mapping.get(str(predicted_class), "Unknown disease")
     if disease_name == "Healthy":
         number_of_disease = 0
