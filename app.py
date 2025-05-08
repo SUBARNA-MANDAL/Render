@@ -169,9 +169,9 @@ from ultralytics import YOLO
 
 
 
-MODEL_rice = tf.keras.models.load_model("rice/MobileNet_rice.h5",compile=False)
-MODEL_potato = tf.keras.models.load_model("potato/MobileNet_potato.h5",compile=False)
-MODEL_tomato = tf.keras.models.load_model("tomato/MobileNet_tomato.h5",compile=False)
+# # MODEL_rice = tf.keras.models.load_model("rice/MobileNet_rice.h5",compile=False)
+# # MODEL_potato = tf.keras.models.load_model("potato/MobileNet_potato.h5",compile=False)
+# MODEL_tomato = tf.keras.models.load_model("tomato/MobileNet_tomato.h5",compile=False)
 # Load the YOLOv8 model
 yolo_model = YOLO('yolov8n.pt')
 
@@ -278,7 +278,8 @@ async def image_predict(image_url: ImageUrl):
     image_array = preprocess_image(file_location)
 
     # Make prediction
-    if id=="1" :
+    if id=="1" :        
+        MODEL_rice = tf.keras.models.load_model("rice/MobileNet_rice.h5",compile=False)
         predictions = MODEL_rice.predict(image_array)
         #get the class index or label
         predicted_class = np.argmax(predictions, axis=1).item()  # Get the class index
@@ -286,11 +287,13 @@ async def image_predict(image_url: ImageUrl):
         with open("rice/class_indices.json") as f:
             disease_mapping = json.load(f)
     elif id=="2" :
+        MODEL_potato = tf.keras.models.load_model("potato/MobileNet_potato.h5",compile=False)
         predictions = MODEL_potato.predict(image_array)
         predicted_class = np.argmax(predictions, axis=1).item()
         with open("potato/class_indices.json") as f:
             disease_mapping = json.load(f)       
     elif id=="3" :
+        MODEL_tomato = tf.keras.models.load_model("tomato/MobileNet_tomato.h5",compile=False)
         predictions = MODEL_tomato.predict(image_array)
         predicted_class = np.argmax(predictions, axis=1).item()
         with open("tomato/class_indices.json") as f:
