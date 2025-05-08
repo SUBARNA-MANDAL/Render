@@ -1,8 +1,8 @@
 {
-  "0": "bacterial_leaf_blight",
-  "1": "brown_spot",
+  "0": "Bacterial leaf blight",
+  "1": "Brown spot",
   "2": "Healthy",
-  "3": "leaf_blast",
-  "4": "leaf_scald",
-  "5": "narrow_brown_spot"
+  "3": "Leaf blast",
+  "4": "Leaf scald",
+  "5": "Narrow brown spot"
 }
